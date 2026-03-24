@@ -17,32 +17,14 @@ var app = builder.Build();
 // Apply migrations automatically on startup
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    try
-    {
-        var db = services.GetRequiredService<WeatherDbContext>();
-        logger.LogInformation("Applying database migrations...");
-        db.Database.Migrate();
-        logger.LogInformation("Database migrations applied successfully.");
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "An error occurred while migrating the database.");
-        throw;
-    }
+    var db = scope.ServiceProvider.GetRequiredService<WeatherDbContext>();
+    db.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseDeveloperExceptionPage();
-}
-else
-{
-    // Temporarily enable detailed errors to troubleshoot Azure issues
-    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
